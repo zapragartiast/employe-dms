@@ -1,0 +1,16 @@
+.env
+env
+venv
+temp
+tmp
+__pycache__
+.idea
+
+*.pyc
+*.sqlite
+*.coverage
+.DS_Store
+env.sh
+migrations
+
+/src/app/config.py
