@@ -11,7 +11,7 @@ class TestAuthBluePrint(BaseTestCase):
     def test_registration(self):
         with self.client:
             response = self.client.post(
-                '/auth/register',
+                '/pegawai/auth/register',
                 data=json.dumps(dict(
                     nip='100000000000000012',
                     nama='Zefri Kurnia Salman',
@@ -37,7 +37,7 @@ class TestAuthBluePrint(BaseTestCase):
         db.session.commit()
         with self.client:
             response = self.client.post(
-                '/auth/register',
+                '/pegawai/auth/register',
                 data = json.dumps(dict(
                     nip='100000000000000012',
                     nama='Zefri Kurnia Salman',
@@ -52,6 +52,41 @@ class TestAuthBluePrint(BaseTestCase):
             )
             self.assertTrue(response.content_type == 'application/json')
             self.assertEqual(response.status_code, 202)
+
+    def test_registered_user_login(self):
+        with self.client:
+            # pegawai registration
+            resp_register = self.client.post(
+                '/pegawai/auth/register',
+                data=json.dumps(dict(
+                    nip='100000000000000012',
+                    nama='Zefri Kunia Salman',
+                    aktif_status='1'
+                )),
+                content_type='application/json',
+            )
+            data_register = json.loads(resp_register.data.decode())
+            self.assertTrue(data_register['status'] == 'success')
+            self.assertTrue(
+                data_register['message'] == 'Successfully registered.'
+            )
+            self.assertTrue(data_register['auth_token'])
+            self.assertTrue(resp_register.content_type == 'application/json')
+            self.assertEqual(resp_register.status_code, 201)
+            # registered user login
+            response = self.client.post(
+                '/pegawai/auth/login',
+                data=json.dumps(dict(
+                    nip='100000000000000012'
+                )),
+                content_type='application/json'
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'success')
+            self.assertTrue(data['message'] == 'Successfully login.')
+            self.assertTrue(data['auth_token'])
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':

@@ -41,4 +41,32 @@ class RegisterAPI(MethodView):
             return make_response(jsonify(response_object)), 202
 
 
+class LoginAPI(MethodView):
+    """
+    Pegawai login
+    """
+    def post(self):
+        post_data = request.get_json()
+        try:
+            pegawai = Pegawai.query.filter_by(
+                nip=post_data.get('nip')
+            ).first()
+            auth_token = pegawai.encode_auth_token(pegawai.id)
+            if auth_token:
+                response_object = {
+                    'status': 'success',
+                    'message': 'Successfully login.',
+                    'auth_token': auth_token.decode()
+                }
+                return make_response(jsonify(response_object)), 200
+        except Exception as e:
+            print(e)
+            response_object = {
+                'status': 'fail',
+                'message': 'Try again'
+            }
+            return make_response(jsonify(response_object)), 500
+
+
 registration_view = RegisterAPI.as_view('register_api')
+login_view = LoginAPI.as_view('login_api')
