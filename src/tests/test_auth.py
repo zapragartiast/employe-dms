@@ -7,17 +7,16 @@ from src.tests.base import BaseTestCase
 
 
 class TestAuthBluePrint(BaseTestCase):
-    """Test for user registration"""
     def test_registration(self):
         with self.client:
             response = self.client.post(
                 '/pegawai/auth/register',
-                data=json.dumps(dict(
+                data=dict(
                     nip='100000000000000012',
                     nama='Zefri Kurnia Salman',
                     aktif_status='1'
-                )),
-                content_type='application/json'
+                ),
+                content_type='application/x-www-form-urlencoded'
             )
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'success')
@@ -27,7 +26,6 @@ class TestAuthBluePrint(BaseTestCase):
             self.assertEqual(response.status_code, 201)
 
     def test_registration_with_alrady_registered_user(self):
-        """Test registration with already registered NIP"""
         pegawai = Pegawai(
             nip='100000000000000012',
             nama='Zefri Kurnia Salman',
@@ -38,12 +36,12 @@ class TestAuthBluePrint(BaseTestCase):
         with self.client:
             response = self.client.post(
                 '/pegawai/auth/register',
-                data = json.dumps(dict(
+                data=dict(
                     nip='100000000000000012',
                     nama='Zefri Kurnia Salman',
                     aktif_status='1'
-                )),
-                content_type = 'application/json'
+                ),
+                content_type='application/x-www-form-urlencoded'
             )
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'fail')
@@ -58,12 +56,12 @@ class TestAuthBluePrint(BaseTestCase):
             # pegawai registration
             resp_register = self.client.post(
                 '/pegawai/auth/register',
-                data=json.dumps(dict(
+                data=dict(
                     nip='100000000000000012',
                     nama='Zefri Kunia Salman',
                     aktif_status='1'
-                )),
-                content_type='application/json',
+                ),
+                content_type='application/x-www-form-urlencoded',
             )
             data_register = json.loads(resp_register.data.decode())
             self.assertTrue(data_register['status'] == 'success')
@@ -76,10 +74,10 @@ class TestAuthBluePrint(BaseTestCase):
             # registered user login
             response = self.client.post(
                 '/pegawai/auth/login',
-                data=json.dumps(dict(
+                data=dict(
                     nip='100000000000000012'
-                )),
-                content_type='application/json'
+                ),
+                content_type='application/x-www-form-urlencoded'
             )
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'success')

@@ -1,0 +1,56 @@
+name: Production CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - 1.0.\d+
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches:
+      - master
+    tags:
+      - 1.0.\d+
+    paths-ignore:
+      - '*.md'
+
+jobs:
+  tests:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    services:
+      postgres_db:
+        volumes:
+          - ./pg-multiple-db:/docker-entrypoint-initdb.d
+        image: postgres:latest
+        env:
+          POSTGRES_MULTIPLE_DATABASES: emp_db
+          POSTGRES_PASSWORD: mypostgre_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: ubuntu latest test, python: '3.9', os: ubuntu-latest, tox: py39 }
+          - { name: ubuntu 18.04 test, python: '3.9', os: ubuntu-18.04, tox: py39 }
+          - { name: python-3.8 ubuntu latest, python: '3.8', os: ubuntu-latest, tox: py38 }
+          - { name: python-3.8 ubuntu 18.04, python: '3.8', os: ubuntu-18.04, tox: py38 }
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Check Postgres Dependencies
+        run: |
+          bash init.sh
+      - name: Install Python Dependencies
+        run: |
+          pip install -r requirements.txt

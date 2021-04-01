@@ -9,14 +9,14 @@ class RegisterAPI(MethodView):
     Pegawai registration
     """
     def post(self):
-        post_data = request.get_json()
-        pegawai = Pegawai.query.filter_by(nip=post_data.get('nip')).first()
+        post_data = request.form.get
+        pegawai = Pegawai.query.filter_by(nip=post_data('nip')).first()
         if not pegawai:
             try:
                 pegawai = Pegawai(
-                    nip=post_data.get('nip'),
-                    nama=post_data.get('nama'),
-                    aktif_status=post_data.get('aktif_status')
+                    nip=post_data('nip'),
+                    nama=post_data('nama'),
+                    aktif_status=post_data('aktif_status')
                 )
                 db.session.add(pegawai)
                 db.session.commit()
@@ -46,10 +46,10 @@ class LoginAPI(MethodView):
     Pegawai login
     """
     def post(self):
-        post_data = request.get_json()
+        post_data = request.form.get
         try:
             pegawai = Pegawai.query.filter_by(
-                nip=post_data.get('nip')
+                nip=post_data('nip')
             ).first()
             auth_token = pegawai.encode_auth_token(pegawai.id)
             if auth_token:

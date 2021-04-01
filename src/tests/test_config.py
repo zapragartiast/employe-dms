@@ -5,9 +5,6 @@ from flask_testing import TestCase
 
 from src.app import app
 from src.app.config import PG_URI_DEV
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class TestDevelopmentConfig(TestCase):
