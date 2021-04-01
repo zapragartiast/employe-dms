@@ -22,8 +22,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     services:
       postgres_db:
-        volumes:
-          - ./pg-multiple-db:/docker-entrypoint-initdb.d
+        name: pg-container
         image: postgres:latest
         env:
           POSTGRES_PASSWORD: mypostgre_password
