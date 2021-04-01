@@ -22,7 +22,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     services:
       postgres_db:
-        name: pg-container
         image: postgres:latest
         env:
           POSTGRES_PASSWORD: mypostgre_password
