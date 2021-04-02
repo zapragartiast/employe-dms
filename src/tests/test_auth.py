@@ -14,7 +14,7 @@ class TestAuthBluePrint(BaseTestCase):
                 data=dict(
                     nip='100000000000000012',
                     nama='Zefri Kurnia Salman',
-                    aktif_status='1'
+                    aktif_status='1',
                 ),
                 content_type='application/x-www-form-urlencoded'
             )

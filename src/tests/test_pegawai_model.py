@@ -8,9 +8,16 @@ from src.tests.base import BaseTestCase
 class TestPegawaiModel(BaseTestCase):
     def test_encode_decode_auth_token(self):
         pegawai = Pegawai(
-            nip=100000000000000012,
+            nip='100000000000000012',
+            nik='12345678',
+            gelar_depan='',
+            gelar_belakang='',
             nama="Zefri Kurnia Salman",
-            aktif_status=1
+            avatar='',
+            tempat_lahir='',
+            tanggal_lahir='02-28-1990',
+            jenis_kelamin='2',
+            aktif_status='1'
         )
         db.session.add(pegawai)
         db.session.commit()

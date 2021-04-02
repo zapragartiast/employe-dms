@@ -1,6 +1,7 @@
+from flask import Blueprint
 from src.app.api import *
 
-auth_blueprint = Blueprint('auth', __name__)
+auth_blueprint = Blueprint('api', __name__)
 
 auth_blueprint.add_url_rule(
     '/',

@@ -1,7 +1,14 @@
+import os
+
 from flask import request, make_response, jsonify
 from flask.views import MethodView
-from src.app import db
+from src.app import db, app
 from src.models.pegawai import Pegawai
+from werkzeug.utils import secure_filename
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 
 class RegisterAPI(MethodView):
@@ -9,24 +16,40 @@ class RegisterAPI(MethodView):
     Pegawai registration
     """
     def post(self):
-        post_data = request.form.get
-        pegawai = Pegawai.query.filter_by(nip=post_data('nip')).first()
+        avatar = request.files['avatar']
+        pegawai = Pegawai.query.filter_by(nip=request.form.get('nip')).first()
         if not pegawai:
             try:
                 pegawai = Pegawai(
-                    nip=post_data('nip'),
-                    nama=post_data('nama'),
-                    aktif_status=post_data('aktif_status')
+                    nip=request.form.get('nip'),
+                    nik=request.form.get('nik'),
+                    gelar_depan=request.form.get('gelar_depan'),
+                    gelar_belakang=request.form.get('gelar_belakang'),
+                    nama=request.form.get('nama'),
+                    avatar=avatar.filename,
+                    tempat_lahir=request.form.get('tempat_lahir'),
+                    tanggal_lahir=request.form.get('tanggal_lahir'),
+                    jenis_kelamin=request.form.get('jenis_kelamin'),
+                    aktif_status=request.form.get('aktif_status')
                 )
-                db.session.add(pegawai)
-                db.session.commit()
-                auth_token = pegawai.encode_auth_token(pegawai.id)
-                response_object = {
-                    'status': 'success',
-                    'message': 'Successfully registered.',
-                    'auth_token': auth_token.decode()
-                }
-                return make_response(jsonify(response_object)), 201
+                if avatar and allowed_file(avatar.filename):
+                    filename = secure_filename(avatar.filename)
+                    avatar.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    db.session.add(pegawai)
+                    db.session.commit()
+                    auth_token = pegawai.encode_auth_token(pegawai.id)
+                    response_object = {
+                        'status': 'success',
+                        'message': 'Successfully registered.',
+                        'auth_token': auth_token.decode()
+                    }
+                    return make_response(jsonify(response_object)), 201
+                else:
+                    response_object = {
+                        'status': 'fail',
+                        'message': 'Please upload png, jpg, jpeg file extensions'
+                    }
+                    return make_response(jsonify(response_object)), 400
             except Exception as e:
                 response_object = {
                     'status': 'fail',

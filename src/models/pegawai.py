@@ -14,6 +14,7 @@ class Pegawai(db.Model):
     gelar_depan = db.Column(db.String(255))
     gelar_belakang = db.Column(db.String(255))
     nama = db.Column(db.String(255), nullable=False)
+    avatar = db.Column(db.Text)
     tempat_lahir = db.Column(db.String(255))
     tanggal_lahir = db.Column(db.Date)
     jenis_kelamin = db.Column(db.SmallInteger)
@@ -21,9 +22,28 @@ class Pegawai(db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
     updated_at = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, nip, nama, aktif_status):
+    def __init__(
+            self,
+            nip,
+            nama,
+            aktif_status,
+            nik=None,
+            gelar_depan=None,
+            gelar_belakang=None,
+            avatar=None,
+            tempat_lahir=None,
+            tanggal_lahir=None,
+            jenis_kelamin=None,
+    ):
         self.nip = nip
+        self.nik = nik
+        self.gelar_depan = gelar_depan
+        self.gelar_belakang = gelar_belakang
         self.nama = nama
+        self.avatar = avatar
+        self.tempat_lahir = tempat_lahir
+        self.tanggal_lahir = tanggal_lahir
+        self.jenis_kelamin = jenis_kelamin
         self.aktif_status = aktif_status
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()

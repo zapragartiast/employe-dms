@@ -13,4 +13,4 @@ __pycache__
 env.sh
 migrations
 
-/src/app/config.py
+/src/app/upload
