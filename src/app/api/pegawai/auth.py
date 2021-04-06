@@ -16,22 +16,38 @@ class RegisterAPI(MethodView):
     Pegawai registration
     """
     def post(self):
+        post_data = request.form.get
+        pegawai = Pegawai.query.filter_by(
+            nip=post_data('nip'),
+            nik=post_data('nik')
+        ).first()
         avatar = request.files['avatar']
-        pegawai = Pegawai.query.filter_by(nip=request.form.get('nip')).first()
         if not pegawai:
             try:
                 pegawai = Pegawai(
-                    nip=request.form.get('nip'),
-                    nik=request.form.get('nik'),
-                    gelar_depan=request.form.get('gelar_depan'),
-                    gelar_belakang=request.form.get('gelar_belakang'),
-                    nama=request.form.get('nama'),
-                    avatar=avatar.filename,
-                    tempat_lahir=request.form.get('tempat_lahir'),
-                    tanggal_lahir=request.form.get('tanggal_lahir'),
-                    jenis_kelamin=request.form.get('jenis_kelamin'),
-                    aktif_status=request.form.get('aktif_status')
+                    nip=post_data('nip'),
+                    nama=post_data('nama'),
+                    aktif_status=post_data('aktif_status'),
+                    nik=post_data('nik'),
+                    avatar=post_data('avatar'),
+                    gelar_depan=post_data('gelar_depan'),
+                    gelar_belakang=post_data('gelar_belakang'),
+                    tempat_lahir=post_data('tempat_lahir'),
+                    tanggal_lahir=post_data('tanggal_lahir'),
+                    jenis_kelamin=post_data('jennies_kelamin')
                 )
+
+                if pegawai.avatar == '':
+                    db.session.add(pegawai)
+                    db.session.commit()
+                    auth_token = pegawai.encode_auth_token(pegawai.id)
+                    response_object = {
+                        'status': 'success',
+                        'message': 'Successfully registered.',
+                        'auth_token': auth_token.decode()
+                    }
+                    return make_response(jsonify(response_object)), 201
+                
                 if avatar and allowed_file(avatar.filename):
                     filename = secure_filename(avatar.filename)
                     avatar.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -47,13 +63,15 @@ class RegisterAPI(MethodView):
                 else:
                     response_object = {
                         'status': 'fail',
-                        'message': 'Please upload png, jpg, jpeg file extensions'
+                        'message': 'Something error when uploading your files.'
                     }
-                    return make_response(jsonify(response_object)), 400
+                    make_response(jsonify(response_object)), 401
+
             except Exception as e:
                 response_object = {
                     'status': 'fail',
-                    'message': 'Some error occurred. Please try again.'
+                    'message': 'An error occurred. Please try again.',
+                    'code': print(e)
                 }
                 return make_response(jsonify(response_object)), 401
         else:
@@ -72,7 +90,8 @@ class LoginAPI(MethodView):
         post_data = request.form.get
         try:
             pegawai = Pegawai.query.filter_by(
-                nip=post_data('nip')
+                nip=post_data('nip'),
+                nik=post_data('nik')
             ).first()
             auth_token = pegawai.encode_auth_token(pegawai.id)
             if auth_token:

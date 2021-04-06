@@ -1,18 +1,18 @@
-name: Production CI
+name: Development CI
 
 on:
   push:
     branches:
       - master
     tags:
-      - 1.0.\d+
+      - 1.\d+.\d+
     paths-ignore:
       - '*.md'
   pull_request:
     branches:
       - master
     tags:
-      - 1.0.\d+
+      - 1.\d+.\d+
     paths-ignore:
       - '*.md'
 
@@ -45,9 +45,14 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
-      - name: Check Postgres Dependencies
+      - name: Check Environment
         run: |
           bash init.sh
       - name: Install Python Dependencies
         run: |
+          python -m venv env
+          . ./env/bin/activate
           pip install -r requirements.txt
+      - name: Test The Application
+        run: |
+          python main.py test

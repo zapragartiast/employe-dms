@@ -1,6 +1,5 @@
-import os
-
 from dotenv import load_dotenv
+from src.app import *
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,8 +13,6 @@ DATABASE_NAME = os.getenv('DATABASE_NAME')
 # database endpoint
 PG_URI_DEV = 'postgresql://' + DATABASE_USER + ':' + DATABASE_PASS + '@' + DATABASE_HOST + '/' + DATABASE_NAME
 PG_URI_PROD = 'postgresql://' + DATABASE_USER + ':' + DATABASE_PASS + '@' + DATABASE_HOST + '/' + DATABASE_NAME
-
-UPLOAD_FOLDER = os.path.join(basedir, 'upload/files')
 
 
 class BaseConfig:
