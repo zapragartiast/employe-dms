@@ -14,7 +14,7 @@ jobs:
     steps:
       - checkout
       - run: sudo apt-get update
-      - run: sudo apt-get install postgersql-client
+      - run: sudo apt-get install postgresql-client
       - run: whoami
       - run:
           name: Python 3.9 Requirements
