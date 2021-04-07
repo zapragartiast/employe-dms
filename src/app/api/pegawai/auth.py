@@ -26,7 +26,7 @@ class RegisterAPI(MethodView):
                 avatar = request.files['avatar']
                 pegawai = Pegawai(
                     nip=post_data('nip'),
-                    nama=post_data('nama'),
+                    nama=str.upper(post_data('nama')),
                     aktif_status=post_data('aktif_status'),
                     nik=post_data('nik'),
                     avatar=avatar.filename,
