@@ -6,7 +6,8 @@ jobs:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
         environment:
-          POSTGRES_PASSWORD: mypostgre_password
+          POSTGRES_PASSWORD: "mypostgre_password"
+
       - image: circleci/postgres:latest
         auth:
           username: $DOCKERHUB_USERNAME
@@ -32,7 +33,7 @@ jobs:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
         environment:
-          POSTGRES_PASSWORD: mypostgre_password
+          POSTGRES_PASSWORD: "mypostgre_password"
     steps:
       - checkout
       - run:
