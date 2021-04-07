@@ -2,10 +2,21 @@ language: python
 
 jobs:
   include:
-    - name: "Python 3.9.X on Xenial Linux"
+    - name: "Python 3.9 on Xenial Linux"
       python: 3.9
-      before_install:
-        - python -m venv env
-        - source env/bin/activate
+      os: linux
+      dist: xenial
+    - name: "Python 3.9 on Bionic Linux"
+      python: 3.9
+      os: linux
+      dist: bionic
+    - name: "Python 3.8 on Xenial Linux"
+      python: 3.8
+      os: linux
+      dist: xenial
+    - name: "Python 3.8 on Bionic Linux"
+      python: 3.8
+      os: linux
+      dist: bionic
 
-install: pip install -r requirements
+install: pip install -r requirements.txt
