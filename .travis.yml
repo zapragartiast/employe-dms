@@ -19,4 +19,8 @@ jobs:
       os: linux
       dist: bionic
 
-install: pip install -r requirements.txt
+install:
+  - pip install -r requirements.txt
+
+script:
+  - bash echo "This is just a test on Travis CI"
