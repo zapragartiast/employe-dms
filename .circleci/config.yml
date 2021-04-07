@@ -13,6 +13,9 @@ jobs:
           POSTGRES_PASSWORD: mypostgre_password
     steps:
       - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgersql-client-13.2
+      - run: whoami
       - run:
           name: Python 3.9 Requirements
           command: |
@@ -35,6 +38,9 @@ jobs:
           POSTGRES_PASSWORD: mypostgre_password
     steps:
       - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgersql-client-13.2
+      - run: whoami
       - run:
           name: Python 3.8 Requirements
           command: |
