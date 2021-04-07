@@ -2,18 +2,10 @@ language: python
 
 jobs:
   include:
-    - name: "Python 3.9 on Xenial Linux"
-      python: 3.9
-      os: linux
-      dist: xenial
     - name: "Python 3.9 on Bionic Linux"
       python: 3.9
       os: linux
       dist: bionic
-    - name: "Python 3.8 on Xenial Linux"
-      python: 3.8
-      os: linux
-      dist: xenial
     - name: "Python 3.8 on Bionic Linux"
       python: 3.8
       os: linux
