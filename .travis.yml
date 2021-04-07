@@ -22,5 +22,10 @@ jobs:
 install:
   - pip install -r requirements.txt
 
+services:
+  - postgresql
+
 script:
-  - echo "This is just a test on Travis CI"
+  - sh init.sh
+  - python main.py test
+  - python main.py test_cov
