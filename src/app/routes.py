@@ -21,3 +21,9 @@ api_blueprint.add_url_rule(
     view_func=login_view,
     methods=['POST']
 )
+
+api_blueprint.add_url_rule(
+    '/pegawai/auth/status',
+    view_func=pegawai_api,
+    methods=['GET']
+)

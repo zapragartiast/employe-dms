@@ -96,6 +96,50 @@ class TestAuthBluePrint(BaseTestCase):
             self.assertTrue(response.content_type == 'application/json')
             self.assertEqual(response.status_code, 200)
 
+    def test_user_status(self):
+        data_load = {
+            'nip': '100000000000000012',
+            'nama': 'John Wick',
+            'aktif_status': '1',
+        }
+        data_load = {key: str(value) for key, value in data_load.items()}
+        data_load['avatar'] = (io.BytesIO(b'test'), 'src/tests/dadang.jpg')
+        with self.client:
+            register_response = self.client.post(
+                '/pegawai/auth/register',
+                data=data_load,
+                content_type='multipart/form-data'
+            )
+            response = self.client.get(
+                '/pegawai/auth/status',
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        register_response.data.decode()
+                    )['auth_token']
+                )
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'success')
+            self.assertTrue(data['data'] is not None)
+            self.assertTrue(data['data']['nip'] == '100000000000000012')
+            self.assertEqual(response.status_code, 200)
+
+    def test_non_registered_user_login(self):
+        data = {
+            'nip': '100000000000000012'
+        }
+        with self.client:
+            response = self.client.post(
+                '/pegawai/auth/login',
+                data=data,
+                content_type='multipart/form-data'
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'User does not exists')
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertEqual(response.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -21,15 +21,15 @@ class RegisterAPI(MethodView):
             nip=post_data('nip'),
             nik=post_data('nik')
         ).first()
-        avatar = request.files['avatar']
         if not pegawai:
             try:
+                avatar = request.files['avatar']
                 pegawai = Pegawai(
                     nip=post_data('nip'),
                     nama=post_data('nama'),
                     aktif_status=post_data('aktif_status'),
                     nik=post_data('nik'),
-                    avatar=post_data('avatar'),
+                    avatar=avatar.filename,
                     gelar_depan=post_data('gelar_depan'),
                     gelar_belakang=post_data('gelar_belakang'),
                     tempat_lahir=post_data('tempat_lahir'),
@@ -70,8 +70,7 @@ class RegisterAPI(MethodView):
             except Exception as e:
                 response_object = {
                     'status': 'fail',
-                    'message': 'An error occurred. Please try again.',
-                    'code': print(e)
+                    'message': 'An error occurred. Please try again.'
                 }
                 return make_response(jsonify(response_object)), 401
         else:
@@ -110,5 +109,51 @@ class LoginAPI(MethodView):
             return make_response(jsonify(response_object)), 500
 
 
+class PegawaiAPI(MethodView):
+    """
+    Pegawai Resources
+    """
+    def get(self):
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = Pegawai.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                pegawai = Pegawai.query.filter_by(id=resp).first()
+                pegawai_avatar = pegawai.avatar
+                if pegawai_avatar == '':
+                    pegawai_avatar = 'Can aya foto na euy'
+                else:
+                    pegawai_avatar = request.url_root + 'files/' + pegawai.avatar
+                response_object = {
+                    'status': 'success',
+                    'message': 'Keterangan pegawai',
+                    'data': {
+                        'nip': str(pegawai.nip),
+                        'nama': pegawai.nama,
+                        'pegawai_id': pegawai.id,
+                        'nik': str(pegawai.nik),
+                        'aktif_status': str(pegawai.aktif_status),
+                        'avatar': pegawai_avatar
+                    }
+                }
+                return make_response(jsonify(response_object)), 200
+            response_object = {
+                'status': 'fail',
+                'message': resp
+            }
+            return make_response(jsonify(response_object)), 401
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': 'Please provide valid auth token'
+            }
+            return make_response(jsonify(response_object)), 401
+
+
 registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
+pegawai_api = PegawaiAPI.as_view('pegawai_api')
