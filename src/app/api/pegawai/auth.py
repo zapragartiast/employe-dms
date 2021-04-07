@@ -92,14 +92,21 @@ class LoginAPI(MethodView):
                 nip=post_data('nip'),
                 nik=post_data('nik')
             ).first()
-            auth_token = pegawai.encode_auth_token(pegawai.id)
-            if auth_token:
+            if pegawai:
+                auth_token = pegawai.encode_auth_token(pegawai.id)
+                if auth_token:
+                    response_object = {
+                        'status': 'success',
+                        'message': 'Successfully login.',
+                        'auth_token': auth_token.decode()
+                    }
+                    return make_response(jsonify(response_object)), 200
+            else:
                 response_object = {
-                    'status': 'success',
-                    'message': 'Successfully login.',
-                    'auth_token': auth_token.decode()
+                    'status': 'fail',
+                    'message': 'User does not exists'
                 }
-                return make_response(jsonify(response_object)), 200
+                return make_response(jsonify(response_object)), 404
         except Exception as e:
             print(e)
             response_object = {

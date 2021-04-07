@@ -126,7 +126,7 @@ class TestAuthBluePrint(BaseTestCase):
 
     def test_non_registered_user_login(self):
         data = {
-            'nip': '100000000000000012'
+            'nip': '100000000000000010'
         }
         with self.client:
             response = self.client.post(
