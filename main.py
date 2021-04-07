@@ -13,7 +13,7 @@ APP_COVERAGE = coverage.coverage(
         'src/app/config.py',
         'src/tests/*',
         'src/app/*/__init__.py',
-        'src/models/*'
+        'src/app/api/*/__init__.py*'
     ]
 )
 APP_COVERAGE.start()
@@ -39,7 +39,7 @@ def test():
 def test_cov():
     """Run unit test with coverage"""
     tests = unittest.TestLoader().discover('src/tests', pattern='test*.py')
-    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    result = unittest.TextTestRunner(verbosity=3).run(tests)
     if result.wasSuccessful():
         APP_COVERAGE.stop()
         APP_COVERAGE.save()
