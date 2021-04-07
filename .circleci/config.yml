@@ -8,7 +8,7 @@ jobs:
         environment:
           POSTGRES_PASSWORD: mypostgre_password
 
-      - image: circleci/postgres:13.2
+      - image: circleci/postgres:13
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
@@ -28,7 +28,7 @@ jobs:
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
-      - image: circleci/postgres:13.2
+      - image: circleci/postgres:13
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
