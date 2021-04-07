@@ -1,5 +1,5 @@
 jobs:
-  step_one:
+  stepone:
     docker:
       - image: circleci/python:3.9
       - image: circleci/postgers:latest
@@ -12,7 +12,7 @@ jobs:
             sh init.sh
             python main.py test
     name: Python 3.9 Requirements
-  step_two:
+  steptwo:
     docker:
       - image: circleci/python:3.8
       - image: circleci/postgers:latest
@@ -30,5 +30,5 @@ version: 2.1
 workflows:
   main:
     jobs:
-      - step_one
-      - step_two
+      - stepone
+      - steptwo
