@@ -5,6 +5,8 @@ jobs:
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
+        environment:
+          POSTGRES_PASSWORD: mypostgre_password
       - image: circleci/postgres:latest
         auth:
           username: $DOCKERHUB_USERNAME
@@ -18,6 +20,7 @@ jobs:
             pip --version
             sh init.sh
             python main.py test
+            python main.py test_cov
   steptwo:
     docker:
       - image: circleci/python:3.8
@@ -28,6 +31,8 @@ jobs:
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
+        environment:
+          POSTGRES_PASSWORD: mypostgre_password
     steps:
       - checkout
       - run:
@@ -37,10 +42,13 @@ jobs:
             pip --version
             sh init.sh
             python main.py test
+            python main.py test_cov
 
 version: 2.1
 workflows:
   main:
     jobs:
       - stepone
-      - steptwo
+      - steptwo:
+          requires:
+            - stepone
