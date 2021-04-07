@@ -49,6 +49,4 @@ workflows:
   main:
     jobs:
       - stepone
-      - steptwo:
-          requires:
-            - stepone
+      - steptwo
