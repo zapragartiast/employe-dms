@@ -2,16 +2,32 @@ jobs:
   test_python39:
     docker:
       - image: circleci/python:3.9
+      - image: circleci/postgers:latest
     steps:
       - checkout
-      - run:
-          command: |
-            pip install -r requirements.txt
-            pip --version
-          name: Test
+      run:
+        command: |
+          pip install -r requirements.txt
+          pip --version
+          sh init.sh
+          python main.py test
+    name: Install Requirements
+  test_python38:
+    docker:
+      - image: circleci/python:3.8
+      - image: circleci/postgers:latest
+    steps:
+      - checkout
+      run:
+        command: |
+          pip install -r requirements.txt
+          pip --version
+          sh init.sh
+          python main.py test
 
 version: 2.1
 workflows:
   main:
     jobs:
       - test_python39
+      - test_python38
