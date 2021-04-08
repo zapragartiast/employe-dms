@@ -24,6 +24,7 @@ class BaseConfig:
     UPLOAD_FOLDER = UPLOAD_FOLDER
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
     ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+    JWT_TTL = os.getenv('JWT_TTL')
 
 
 class DevelopmentConfig(BaseConfig):
