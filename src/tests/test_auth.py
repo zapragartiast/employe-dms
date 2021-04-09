@@ -4,7 +4,7 @@ import io
 import time
 
 from src.app import db
-from src.models.pegawai import Pegawai
+from src.models.pegawai import Pegawai, BlackListToken
 from src.tests.base import BaseTestCase
 
 
@@ -226,7 +226,7 @@ class TestAuthBluePrint(BaseTestCase):
             self.assertTrue(resp_login.content_type == 'application/json')
             self.assertEqual(resp_login.status_code, 200)
             # invalid token logout
-            time.sleep(6)
+            time.sleep(3)
             response = self.client.post(
                 '/pegawai/auth/logout',
                 headers=dict(
@@ -238,6 +238,60 @@ class TestAuthBluePrint(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'fail')
             self.assertTrue(data['message'] == 'Signature expired. Please login again.')
+            self.assertEqual(response.status_code, 401)
+
+    def test_valid_blacklisted_token_logout(self):
+        data = {
+            'nip': '100000000000000012',
+            'nama': 'John Wick',
+            'aktif_status': '1'
+        }
+        data = {key: str(value) for key, value in data.items()}
+        data['avatar'] = (io.BytesIO(b'test'), 'src/tests/dadang.jpg')
+        with self.client:
+            # user registration
+            resp_register = self.client.post(
+                '/pegawai/auth/register',
+                data=data,
+                content_type='multipart/form-data'
+            )
+            data_register = json.loads(resp_register.data.decode())
+            self.assertTrue(data_register['status'] == 'success')
+            self.assertTrue(data_register['message'] == 'Successfully registered.')
+            self.assertTrue(data_register['auth_token'])
+            self.assertTrue(resp_register.content_type == 'application/json')
+            self.assertEqual(resp_register.status_code, 201)
+            # user login
+            resp_login = self.client.post(
+                '/pegawai/auth/login',
+                data={
+                    'nip': '100000000000000012'
+                },
+                content_type='multipart/form-data'
+            )
+            data_login = json.loads(resp_login.data.decode())
+            self.assertTrue(data_login['status'] == 'success')
+            self.assertTrue(data_login['message'] == 'Successfully login.')
+            self.assertTrue(data_login['auth_token'])
+            self.assertTrue(resp_login.content_type == 'application/json')
+            self.assertEqual(resp_login.status_code, 200)
+            # validate blacklist
+            blacklist_token = BlackListToken(
+                token=json.loads(resp_login.data.decode())['auth_token']
+            )
+            db.session.add(blacklist_token)
+            db.session.commit()
+            response = self.client.post(
+                '/pegawai/auth/logout',
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['auth_token']
+                )
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Token blacklisted. Please login again.')
             self.assertEqual(response.status_code, 401)
 
 

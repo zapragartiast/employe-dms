@@ -22,7 +22,7 @@ if [ ! -f $ENV_FILE ]; then
     SECRET_KEY=super-secret-and-private
     PROD_SECRET_KEY=541e984103d4099bb8383050c56d511e733d85e6ab889a1c363ced6517
     # in seconds - put 31556952 for a year
-    JWT_TTL=4
+    JWT_TTL=2
 EOF
   echo "The $ENV_FILE has been created."
 else
