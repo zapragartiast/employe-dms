@@ -11,6 +11,12 @@ api_blueprint.add_url_rule(
 )
 
 api_blueprint.add_url_rule(
+    '/pegawai/auth/detail/<int:id>',
+    view_func=update_api,
+    methods=['GET', 'PUT']
+)
+
+api_blueprint.add_url_rule(
     '/pegawai/auth/register',
     view_func=registration_view,
     methods=['POST']
