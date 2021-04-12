@@ -51,5 +51,4 @@ jobs:
       - name: Install and Testing
         run: |
           pip install -r requirements.txt
-          python main.py test
           python main.py test_cov

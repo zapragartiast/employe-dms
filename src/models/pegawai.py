@@ -45,8 +45,8 @@ class Pegawai(db.Model):
         self.tanggal_lahir = tanggal_lahir
         self.jenis_kelamin = jenis_kelamin
         self.aktif_status = aktif_status
-        self.created_at = datetime.datetime.now()
-        self.updated_at = datetime.datetime.now()
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
 
     def encode_auth_token(self, pegawai_id):
         """

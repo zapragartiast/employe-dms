@@ -1,7 +1,7 @@
 jobs:
   stepone:
     docker:
-      - image: circleci/python:3.9
+      - image: circleci/python:3.7
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
@@ -17,16 +17,15 @@ jobs:
       - run: sudo apt-get install postgresql-client
       - run: whoami
       - run:
-          name: Python 3.9 Requirements
+          name: Python 3.7 Requirements
           command: |
             pip install -r requirements.txt
             pip --version
             sh init.sh
-            python main.py test
             python main.py test_cov
   steptwo:
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.6
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
@@ -42,12 +41,11 @@ jobs:
       - run: sudo apt-get install postgresql-client
       - run: whoami
       - run:
-          name: Python 3.8 Requirements
+          name: Python 3.6 Requirements
           command: |
             pip install -r requirements.txt
             pip --version
             sh init.sh
-            python main.py test
             python main.py test_cov
 
 version: 2.1

@@ -294,6 +294,55 @@ class TestAuthBluePrint(BaseTestCase):
             self.assertTrue(data['message'] == 'Token blacklisted. Please login again.')
             self.assertEqual(response.status_code, 401)
 
+    def test_get_detail_pegawai(self):
+        data = {
+            'nip': '100000000000000012',
+            'nama': 'John Wick',
+            'aktif_status': '1'
+        }
+        data = {key: str(value) for key, value in data.items()}
+        data['avatar'] = (io.BytesIO(b'test'), 'src/tests/dadang.jpg')
+        with self.client:
+            reg_response = self.client.post(
+                '/pegawai/auth/register',
+                data=data,
+                content_type='multipart/form-data'
+            )
+            data_reg = json.loads(reg_response.data.decode())
+            self.assertTrue(data_reg['status'] == 'success')
+            self.assertTrue(data_reg['message'] == 'Successfully registered.')
+            self.assertTrue(data_reg['auth_token'])
+            self.assertTrue(reg_response.content_type == 'application/json')
+            self.assertEqual(reg_response.status_code, 201)
+            # user login
+            log_response = self.client.post(
+                '/pegawai/auth/login',
+                data={
+                    'nip': '100000000000000012'
+                },
+                content_type='multipart/form-data'
+            )
+            data_log = json.loads(log_response.data.decode())
+            self.assertTrue(data_log['status'] == 'success')
+            self.assertTrue(data_log['message'] == 'Successfully login.')
+            self.assertTrue(data_log['auth_token'])
+            self.assertTrue(log_response.content_type == 'application/json')
+            self.assertEqual(log_response.status_code, 200)
+            # get user detail
+            response = self.client.get(
+                '/pegawai/auth/detail/1',
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        log_response.data.decode()
+                    )['auth_token']
+                )
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'success')
+            self.assertTrue(data['data'] is not None)
+            self.assertTrue(data['data']['nip'] == '100000000000000012')
+            self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

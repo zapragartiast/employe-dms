@@ -5,11 +5,11 @@ jobs:
     - name: "Python 3.9 on Bionic Linux"
       python: 3.9
       os: linux
-      dist: bionic
+      dist: xenial
     - name: "Python 3.8 on Bionic Linux"
       python: 3.8
       os: linux
-      dist: bionic
+      dist: xenial
 
 install:
   - pip install -r requirements.txt

@@ -130,11 +130,10 @@ class PegawaiAPI(MethodView):
             resp = Pegawai.decode_auth_token(auth_token)
             if not isinstance(resp, str):
                 pegawai = Pegawai.query.filter_by(id=resp).first()
-                pegawai_avatar = pegawai.avatar
-                if pegawai_avatar == '':
-                    pegawai_avatar = 'Can aya foto na euy'
+                if pegawai.avatar == '':
+                    pegawai.avatar = 'Can aya foto na euy'
                 else:
-                    pegawai_avatar = request.url_root + 'files/' + pegawai.avatar
+                    pegawai.avatar = request.url_root + 'files/' + pegawai.avatar
                 response_object = {
                     'status': 'success',
                     'message': 'Keterangan pegawai',
@@ -144,7 +143,7 @@ class PegawaiAPI(MethodView):
                         'nama': pegawai.nama,
                         'nik': str(pegawai.nik),
                         'aktif_status': str(pegawai.aktif_status),
-                        'avatar': pegawai_avatar
+                        'avatar': pegawai.avatar
                     }
                 }
                 return make_response(jsonify(response_object)), 200
@@ -161,7 +160,7 @@ class PegawaiAPI(MethodView):
             return make_response(jsonify(response_object)), 401
 
 
-class UpdatePegawai(MethodView):
+class DetailPegawai(MethodView):
     def get(self, id):
         auth_header = request.headers.get('Authorization')
         if auth_header:
@@ -172,11 +171,11 @@ class UpdatePegawai(MethodView):
             resp = Pegawai.decode_auth_token(auth_token)
             if not isinstance(resp, str):
                 pegawai = Pegawai.query.filter_by(id=id).first()
-                if pegawai.avatar == '':
-                    pegawai.avatar = 'Can aya foto na euy'
-                else:
-                    pegawai.avatar = request.url_root + 'files/' + pegawai.avatar
                 if pegawai:
+                    if pegawai.avatar == '':
+                        pegawai.avatar = 'Can aya foto na euy'
+                    else:
+                        pegawai.avatar = request.url_root + 'files/' + pegawai.avatar
                     response_object = {
                         'status': 'success',
                         'message': 'Keterangan pegawai',
@@ -206,6 +205,34 @@ class UpdatePegawai(MethodView):
             response_object = {
                 'status': 'fail',
                 'message': 'Please provide valid auth token'
+            }
+            return make_response(jsonify(response_object)), 401
+
+
+class UpdatePegawai(MethodView):
+    def put(self):
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+        if auth_token:
+            try:
+                response_object = {
+                    'status': 'success',
+                    'id': 'ok'
+                }
+                return make_response(jsonify(response_object)), 200
+            except Exception as e:
+                response_object = {
+                    'status': 'fail',
+                    'message': e
+                }
+                return make_response(jsonify(response_object)), 401
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': 'Access restricted. Please provide valid auth token'
             }
             return make_response(jsonify(response_object)), 401
 
@@ -253,4 +280,5 @@ registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
 pegawai_api = PegawaiAPI.as_view('pegawai_api')
 logout_view = LogoutAPI.as_view('logout_api')
-update_api = UpdatePegawai.as_view('update_pegawai')
+detail_pegawai = DetailPegawai.as_view('detail_pegawai')
+update_pegawai = UpdatePegawai.as_view('update_pegawai')
