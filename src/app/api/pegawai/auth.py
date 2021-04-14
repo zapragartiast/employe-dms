@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from flask import request, make_response, jsonify
@@ -147,11 +148,12 @@ class PegawaiAPI(MethodView):
                     }
                 }
                 return make_response(jsonify(response_object)), 200
-            response_object = {
-                'status': 'fail',
-                'message': resp
-            }
-            return make_response(jsonify(response_object)), 401
+            else:
+                response_object = {
+                    'status': 'fail',
+                    'message': resp
+                }
+                return make_response(jsonify(response_object)), 401
         else:
             response_object = {
                 'status': 'fail',
@@ -217,16 +219,39 @@ class UpdatePegawai(MethodView):
         else:
             auth_token = ''
         if auth_token:
-            try:
-                response_object = {
-                    'status': 'success',
-                    'id': 'ok'
-                }
-                return make_response(jsonify(response_object)), 200
-            except Exception as e:
+            resp = Pegawai.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                pegawai = Pegawai.query.filter_by(id=resp).first()
+                if pegawai:
+                    try:
+                        pegawai.nama = str.upper(request.form.get('nama'))
+                        pegawai.nik = request.form.get('nik')
+                        pegawai.updated_at = datetime.datetime.utcnow()
+                        db.session.commit()
+                        response_object = {
+                            'status': 'success',
+                            'message': 'Pegawai has been updated',
+                            'data': {
+                                'nama': pegawai.nama
+                            }
+                        }
+                        return make_response(jsonify(response_object)), 200
+                    except Exception as e:
+                        response_object = {
+                            'status': 'fail',
+                            'message': e
+                        }
+                        return make_response(jsonify(response_object)), 401
+                else:
+                    response_object = {
+                        'status': 'fail',
+                        'message': 'Fatal error'
+                    }
+                    return make_response(jsonify(response_object)), 500
+            else:
                 response_object = {
                     'status': 'fail',
-                    'message': e
+                    'message': resp
                 }
                 return make_response(jsonify(response_object)), 401
         else:

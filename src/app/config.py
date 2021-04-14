@@ -41,6 +41,7 @@ class TestingConfig(BaseConfig):
     BCRYPT_LOG_ROUNDS = 4
     SQLALCHEMY_DATABASE_URI = PG_URI_DEV + "_test"
     PRESERVE_CONTEXT_ON_EXCEPTION = False
+    JWT_TTL = 2
 
 
 class ProductionConfig(BaseConfig):
