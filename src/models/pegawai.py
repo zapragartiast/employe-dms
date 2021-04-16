@@ -55,7 +55,11 @@ class Pegawai(db.Model):
         """
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=float(app.config['JWT_TTL'])),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(
+                    seconds=float(
+                        app.config['JWT_TTL']
+                    )
+                ),
                 'iat': datetime.datetime.utcnow(),
                 'sub': pegawai_id
             }

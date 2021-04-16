@@ -48,7 +48,6 @@ class RegisterAPI(MethodView):
                         'auth_token': auth_token.decode()
                     }
                     return make_response(jsonify(response_object)), 201
-                
                 if avatar and allowed_file(avatar.filename):
                     filename = secure_filename(avatar.filename)
                     avatar.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -71,7 +70,8 @@ class RegisterAPI(MethodView):
             except Exception as e:
                 response_object = {
                     'status': 'fail',
-                    'message': 'An error occurred. Please try again.'
+                    'message': 'An error occurred. Please try again.',
+                    'code': e
                 }
                 return make_response(jsonify(response_object)), 401
         else:

@@ -343,6 +343,58 @@ class TestAuthBluePrint(BaseTestCase):
             self.assertTrue(data['data']['nip'] == '100000000000000012')
             self.assertEqual(response.status_code, 200)
 
+    def test_update_pegawai(self):
+        data = {
+            'nip': '100000000000000012',
+            'nama': 'John Wick',
+            'aktif_status': '1'
+        }
+        data = {key: str(value) for key, value in data.items()}
+        data['avatar'] = (io.BytesIO(b'test'), 'src/tests/dadang.jpg')
+        with self.client:
+            resp_register = self.client.post(
+                '/pegawai/auth/register',
+                data=data,
+                content_type='multipart/form-data'
+            )
+            data_register = json.loads(resp_register.data.decode())
+            self.assertTrue(data_register['status'] == 'success')
+            self.assertTrue(data_register['message'] == 'Successfully registered.')
+            self.assertTrue(data_register['auth_token'])
+            self.assertTrue(resp_register.content_type == 'application/json')
+            self.assertEqual(resp_register.status_code, 201)
+            resp_login = self.client.post(
+                '/pegawai/auth/login',
+                data={
+                    'nip': '100000000000000012'
+                },
+                content_type='multipart/form-data'
+            )
+            data_login = json.loads(resp_login.data.decode())
+            self.assertTrue(data_login['status'] == 'success')
+            self.assertTrue(data_login['message'] == 'Successfully login.')
+            self.assertTrue(data_login['auth_token'])
+            self.assertTrue(resp_login.content_type == 'application/json')
+            self.assertEqual(resp_login.status_code, 200)
+            response = self.client.put(
+                '/pegawai/auth/update',
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['auth_token']
+                ),
+                data={
+                    'nama': 'Blast'
+                },
+                content_type='multipart/form-data'
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'success')
+            self.assertTrue(data['message'] == 'Pegawai has been updated')
+            self.assertTrue(data['data']['nama'] == 'BLAST')
+            self.assertTrue(response.content_type == 'application/json')
+            self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

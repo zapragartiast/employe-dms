@@ -10,7 +10,11 @@ app = Flask(
     static_folder='upload'
     )
 
-UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'upload/files')
+UPLOAD_FOLDER = os.path.join(
+    os.path.abspath(
+        os.path.dirname(__file__)
+    ), 'upload/files'
+)
 
 
 app_settings = os.getenv(

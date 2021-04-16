@@ -9,10 +9,11 @@ from src.app import app, db
 
 class GunicornServer(Command):
     """Run the app with gunicorn server"""
-    def __init__(self, host='0.0.0.0', port=5000, workers=4):
+    def __init__(self, host='0.0.0.0', port=5000, workers=2, timeout=0):
         self.host = host
         self.port = port
         self.workers = workers
+        self.timeout = timeout
 
     def get_options(self):
         return (
@@ -26,15 +27,21 @@ class GunicornServer(Command):
             Option('-w', '--workers',
                    dest='workers',
                    type=int,
-                   default=self.workers)
+                   default=self.workers),
+            Option('-t', '--timeout',
+                   dest='timeout',
+                   type=int,
+                   default=self.timeout)
         )
 
-    def __call__(self, app, host, port, workers):
+    def __call__(self, app, host, port, workers, timeout):
         from gunicorn import version_info
         if version_info < (0, 9, 0):
             from gunicorn.arbiter import Arbiter
             from gunicorn.config import Config
-            arbiter = Arbiter(Config({'bind': '%s:%d' % (host, int(port)), 'workers': workers}), app)
+            arbiter = Arbiter(Config(
+                {'bind': '%s:%d' % (host, int(port)), 'workers': workers}
+            ), app)
             arbiter.run()
         else:
             from gunicorn.app.base import Application
