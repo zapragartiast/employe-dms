@@ -2,14 +2,16 @@
 
 # This resource just for CI/CD test environments
 
-if [ ! -f .env ]; then
+ENV_FILE=.env
+
+if [ ! -f $ENV_FILE ]; then
   echo "File $ENV_FILE not found!"
   echo "Create $ENV_FILE file"
   touch $ENV_FILE
   cat <<-EOF > .env
 DATABASE_USER=postgres
-DATABASE_PASS=mypostgresqlpass
-DATABASE_HOST=localhost
+DATABASE_PASS=mypostgre_password
+DATABASE_HOST=127.0.0.1
 DATABASE_NAME=emsdb
 DATABASE_TEST=emsdb_test
 
@@ -21,9 +23,12 @@ EOF
 else
   echo "The $ENV_FILE found. Continue process."
 fi
-export $(xargs <.env)
 
-cat << EOF | psql --host $DATABASE_HOST --username $DATABASE_USER
+export $(xargs <$ENV_FILE)
+
+export $DATABASE_PASS
+
+cat << EOF | psql postgresql://$DATABASE_USER:$DATABASE_PASS@$DATABASE_HOST:5432
 BEGIN;
 SELECT version();
 END;
@@ -32,3 +37,5 @@ CREATE DATABASE $DATABASE_TEST;
 EOF
 
 unset $DATABASE_PASS
+
+exit 0
