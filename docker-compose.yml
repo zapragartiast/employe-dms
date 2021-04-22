@@ -1,3 +1,6 @@
+# This is for development environment
+# Change the command 'python main.py gunicorn' for production environment
+
 version: '3.6'
 
 services:
@@ -7,18 +10,33 @@ services:
       dockerfile: Dockerfile
     image: employee-dms
     container_name: employee-dms-app
-    command: python main.py gunicorn
+    depends_on:
+      - db
+    command: python main.py runserver --port=80 --host=0.0.0.0
     volumes:
+      - .:/home/app/employee_dms/
       - media_volume:/home/app/employee_dms/src/app/upload/files
     ports:
-      - 5000:5000
+      - "5000:80"
     restart: unless-stopped
     networks:
-      - employee-dms-net
+      - empdms-network
+
+  db:
+    image: postgres:latest
+    container_name: employee-dms-db
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASS}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    restart: unless-stopped
+    networks:
+      - empdms-network
 
 networks:
-  employee-dms-net:
-    driver: bridge
+  empdms-network:
 
 volumes:
   media_volume:
+  postgres_data:

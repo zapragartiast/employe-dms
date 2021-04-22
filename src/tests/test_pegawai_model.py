@@ -9,7 +9,7 @@ class TestPegawaiModel(BaseTestCase):
     def test_encode_auth_token(self):
         pegawai = Pegawai(
             nip='100000000000000012',
-            nama="Zefri Kurnia Salman",
+            nama="John Wick",
             aktif_status='1',
             avatar=''
         )
@@ -21,7 +21,7 @@ class TestPegawaiModel(BaseTestCase):
     def test_decode_auth_token(self):
         pegawai = Pegawai(
             nip='100000000000000012',
-            nama="Zefri Kurnia Salman",
+            nama="John Wick",
             aktif_status='1',
             avatar=''
         )

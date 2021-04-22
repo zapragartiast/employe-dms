@@ -34,7 +34,6 @@ RUN mkdir -p /home/app
 # create the app user
 RUN addgroup --system app && adduser --system --group app
 
-
 # create the appropiate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/employee_dms
@@ -51,6 +50,12 @@ RUN pip install --no-cache /wheels/*
 # copy project
 COPY . $APP_HOME
 
+EXPOSE 80
+
 RUN chown -R app:app $APP_HOME
 
 USER app
+
+CMD ["python", "main.py", "buat_db"]
+CMD ["python", "main.py", "migrasi", "init"]
+CMD ["python", "main.py", "migrasi", "migrate"]
