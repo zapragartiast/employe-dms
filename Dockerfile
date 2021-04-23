@@ -56,6 +56,4 @@ RUN chown -R app:app $APP_HOME
 
 USER app
 
-CMD ["python", "main.py", "buat_db"]
-CMD ["python", "main.py", "migrasi", "init"]
-CMD ["python", "main.py", "migrasi", "migrate"]
+CMD flask.init.sh

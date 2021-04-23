@@ -74,6 +74,8 @@ migrate = Migrate(app, db, compare_type=True)
 
 # do migration
 manager.add_command('migrasi', MigrateCommand)
+
+# start gunicorn server
 manager.add_command('gunicorn', GunicornServer())
 
 
