@@ -1,0 +1,23 @@
+# # # # # # # # # # # # # # # #
+# Run the app on Python 3.9.X #
+# # # # # # # # # # # # # # # #
+
+# # # # # # # # # # # # #
+# Starting the builder  #
+# # # # # # # # # # # # #
+
+# pull official base image Python 3.9.X
+FROM python:3.9-slim-buster as builder
+
+# set the working directory
+WORKDIR /usr/workspace/emp_dms
+
+# install system dependencies
+RUN apt-get update && apt-get install -y netcat
+
+# install python dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt /usr/workspace/emp_dms
+RUN pip install -r requirements.txt
+
+COPY . /usr/workspace/emp_dms
