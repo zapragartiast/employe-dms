@@ -12,9 +12,7 @@ services:
     container_name: employee-dms-app
     depends_on:
       - db
-    command: python main.py runserver --port=80 --host=0.0.0.0
     volumes:
-      - .:/home/app/employee_dms/
       - media_volume:/home/app/employee_dms/src/app/upload/files
     ports:
       - "5000:80"

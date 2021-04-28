@@ -53,7 +53,8 @@ COPY . $APP_HOME
 EXPOSE 80
 
 RUN chown -R app:app $APP_HOME
+RUN chmod +x $APP_HOME/flask.init.sh
 
 USER app
 
-CMD flask.init.sh
+CMD ["./flask.init.sh"]

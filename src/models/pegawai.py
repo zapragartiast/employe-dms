@@ -27,10 +27,10 @@ class Pegawai(db.Model):
             nip,
             nama,
             aktif_status,
+            avatar=None,
             nik=None,
             gelar_depan=None,
             gelar_belakang=None,
-            avatar=None,
             tempat_lahir=None,
             tanggal_lahir=None,
             jenis_kelamin=None,
@@ -45,10 +45,10 @@ class Pegawai(db.Model):
         self.tanggal_lahir = tanggal_lahir
         self.jenis_kelamin = jenis_kelamin
         self.aktif_status = aktif_status
-        self.created_at = datetime.datetime.utcnow()
-        self.updated_at = datetime.datetime.utcnow()
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
 
-    def encode_auth_token(self, pegawai_id):
+    def encode_auth_token(self, pegawai):
         """
         Generates auth token
         :return: string
@@ -61,12 +61,12 @@ class Pegawai(db.Model):
                     )
                 ),
                 'iat': datetime.datetime.utcnow(),
-                'sub': pegawai_id
+                'sub': pegawai
             }
             return jwt.encode(
                 payload,
                 app.config.get('SECRET_KEY'),
-                algorithm='HS256'
+                algorithm='HS512'
             )
         except Exception as e:
             return e
