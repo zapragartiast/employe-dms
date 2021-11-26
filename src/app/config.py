@@ -29,6 +29,7 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     """Development Configuration"""
+    ENV = 'development'
     DEBUG = True
     BCRYPT_LOG_ROUNDS = 10
     SQLALCHEMY_DATABASE_URI = PG_URI_DEV

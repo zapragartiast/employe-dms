@@ -17,14 +17,14 @@ class LoginAPI(MethodView):
                 if auth_token:
                     response_object = {
                         'status': 'success',
-                        'message': 'Successfully login.',
+                        'message': 'Berhasil login.',
                         'auth_token': auth_token.decode()
                     }
                     return make_response(jsonify(response_object)), 200
             else:
                 response_object = {
                     'status': 'fail',
-                    'message': 'User does not exists'
+                    'message': 'Pengguna tidak ditemukan.'
                 }
                 return make_response(jsonify(response_object)), 404
         except Exception as e:
