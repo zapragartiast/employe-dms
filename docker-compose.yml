@@ -15,7 +15,7 @@ services:
     volumes:
       - media_volume:/home/app/employee_dms/src/app/upload/files
     ports:
-      - "5000:80"
+      - "5115:80"
     restart: unless-stopped
     networks:
       - empdms-network
